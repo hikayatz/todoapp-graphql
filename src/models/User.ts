@@ -5,12 +5,10 @@ type Contact = {
 
 export type UserModel = {
   id: string;
+  name: string;
   email: string;
   password:string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  language: string;
-  age: number;
-  contacts: [Contact];
+  gender:string;
+  avatar:string;
+  phone:string;
 };

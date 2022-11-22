@@ -2,20 +2,12 @@ import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
 	type User {
-		ID: String
-		email: String
-		firstName: String
-		lastName: String
+		id: ID!
+    name: String!
+		email: String!
+		password: String
 		gender: Gender
-		languange: String
-		age: Int
-		Password: String
-		constacts: [Contact]
-	}
-
-	type Contact {
-		firstname: String
-		lastName: String
+		avatar: String
 	}
 
 	enum Gender {
@@ -23,8 +15,30 @@ export const typeDefs = gql`
 		Female
 		Other
 	}
+
+  type TaskList{
+    id: ID!
+    createdAt: String!
+    title: String!
+    progress: Float!
+
+    users:[User]
+    todos:[Todo]
+  }
+
+  type Todo{
+    id:ID!
+    content: String
+    isCompleted: Boolean
+
+    taskList: TaskList
+  }
+
   type Query {
     getUsers: [User]
     findOneUser: User
+    myTaskLists: [TaskList]
   }
+
+
 `;

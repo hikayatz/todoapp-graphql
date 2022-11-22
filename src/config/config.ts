@@ -1,11 +1,19 @@
-export const PORT = 8080
+import dotenv from "dotenv"
+dotenv.config()
+
+const { APP_PORT, DB_URI, DB_NAME, DB_USER, DB_PASSWORD } = process.env
+const IS_PRODUCTION = process.env.ENV === "prod" ? true : false
+
+console.log(DB_URI)
 export const environment = {
   development: {
-    serverURL: `http://localhost:${PORT}/`,
-    dbString: "mongodb://localhost:27017/graphqlTutorial",
+    serverURL: `http://localhost:${APP_PORT}/`,
+    dbString: DB_URI,
   },
   production: {
-    serverURL: `http://localhost:${PORT}/`,
-    dbString: "mongodb://localhost:27017/graphqlTutorial-prod",
+    serverURL: `http://localhost:${APP_PORT}/`,
+    dbString: DB_URI,
   },
 };
+
+export { APP_PORT, DB_URI, DB_NAME, DB_USER, DB_PASSWORD, IS_PRODUCTION }

@@ -1,20 +1,35 @@
-import express from "express"
-import { ApolloServer } from "apollo-server-express"
-import {PORT } from "./config"
-import { resolvers, typeDefs } from "./data"
 
-const server = new ApolloServer({ typeDefs, resolvers })
+// npm install @apollo/server express graphql cors body-parser
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import express from 'express';
+import http from 'http';
+import cors from 'cors';
+import { json } from 'body-parser';
+import { typeDefs, resolvers } from './data';
+
+interface MyContext {
+  token?: String;
+}
 
 const app = express();
-server.start().then(() => {
-  server.applyMiddleware({ app });
-  app.listen({ port: PORT }, () => {
-    console.log(
-      `Server is running at http://localhost:${PORT}${server.graphqlPath}`
-    );
-  });
+const httpServer = http.createServer(app);
+const server = new ApolloServer<MyContext>({
+  typeDefs,
+  resolvers,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
-app.get("/", (req, res) => {
-  console.log("Apollo GraphQL Express server is ready");
-})
+await server.start();
+app.use(
+  '/graphql',
+  cors<cors.CorsRequest>(),
+  json(),
+  expressMiddleware(server, {
+    context: async ({ req }) => ({ token: req.headers.token }),
+  }),
+);
+
+await new Promise<void>((resolve) => httpServer.listen({ port: 4000 }, resolve));
+console.log(`🚀 Server ready at http://localhost:4000/graphql`);
